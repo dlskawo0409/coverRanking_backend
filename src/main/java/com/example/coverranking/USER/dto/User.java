@@ -1,15 +1,12 @@
-package com.example.coverranking.USER;
+package com.example.coverranking.USER.dto;
 
+import com.example.coverranking.COMMENT.BasicEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,9 +30,11 @@ public class User extends BasicEntity implements UserDetails  {
     @Column(name = "PASSWORD",  nullable = false)
     private String password;
 
-    @Column(name = "NICKNAME")
+    @Column(name = "NICKNAME", unique = true)
     private String nickname;
 
+    @Column(name = "IS_BLOCKED")
+    private Blocked isBlocked;
 
     @Column(name="ROLE")
     private String role;
@@ -47,11 +46,44 @@ public class User extends BasicEntity implements UserDetails  {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
-
         this.role = role;
 
     }
 
 
+    @Override
+    public String getUsername() {
+        return email;
+    }
 
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("user"));
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
