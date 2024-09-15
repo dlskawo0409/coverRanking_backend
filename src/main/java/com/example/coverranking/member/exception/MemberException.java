@@ -12,9 +12,9 @@ public class MemberException {
         }
     }
 
-    public static class MemberBadRequestException extends BadRequestException {
-        public MemberBadRequestException(MemberErrorCode errorCode) {
-            super(new ErrorCode<>(errorCode.getCode(), errorCode.getMessage()));
-        }
-    }
+//    public static class MemberBadRequestException extends BadRequestException {
+//        public MemberBadRequestException(MemberErrorCode errorCode) {
+//            super(new ErrorCode<>(errorCode.getCode(), errorCode.getMessage()));
+//        }
+//    }
 }
