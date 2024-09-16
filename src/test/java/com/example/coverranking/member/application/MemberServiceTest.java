@@ -34,7 +34,13 @@
 //    @DisplayName("사용자 가입 성공")
 //    void testJoinSuccess() {
 //        // Given
-//        AddMemberRequest request = new AddMemberRequest();
+//        AddMemberRequest request = new AddMemberRequest(
+//                "test@example.com",
+//                "password123!",
+//                "testuser",
+//                25,
+//
+//        );
 //        request.setEmail("test@example.com");
 //        request.setPassword("password123");
 //        request.setNickname("testuser");

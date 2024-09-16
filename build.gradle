@@ -27,7 +27,7 @@ dependencies {
     implementation 'org.projectlombok:lombok:1.18.28'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
     testImplementation 'org.springframework.security:spring-security-test'
 
     compileOnly 'org.projectlombok:lombok:1.18.22'
