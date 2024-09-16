@@ -1,8 +1,9 @@
 package com.example.coverranking.member.exception;
 
+import com.example.coverranking.common.exception.BadRequestException;
 import com.example.coverranking.common.exception.ConflictException;
 import com.example.coverranking.common.exception.ErrorCode;
-import org.apache.coyote.BadRequestException;
+
 
 public class MemberException {
 
@@ -12,9 +13,10 @@ public class MemberException {
         }
     }
 
-//    public static class MemberBadRequestException extends BadRequestException {
-//        public MemberBadRequestException(MemberErrorCode errorCode) {
-//            super(new ErrorCode<>(errorCode.getCode(), errorCode.getMessage()));
-//        }
-//    }
+    public static class MemberBadRequestException extends BadRequestException {
+        public MemberBadRequestException(MemberErrorCode errorCode) {
+            super(new ErrorCode<>(errorCode.getCode(), errorCode.getMessage()));
+        }
+    }
+
 }

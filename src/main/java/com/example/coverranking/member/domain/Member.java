@@ -2,7 +2,7 @@ package com.example.coverranking.member.domain;
 
 import com.example.coverranking.comment.BasicEntity;
 import com.example.coverranking.common.util.RegexUtil;
-import com.example.coverranking.member.exception.MemberException.MemberBadRequestException;
+import com.example.coverranking.member.exception.MemberException.*;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
