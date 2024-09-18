@@ -1,9 +1,11 @@
 package com.example.coverranking.member.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Getter;
+
 import java.util.NoSuchElementException;
 import java.util.Arrays;
-
+@Getter
 public enum Role {
     ADMIN("ROLE_ADMIN", "운영자"),
     USER("ROLE_USER", "로그인 회원"),

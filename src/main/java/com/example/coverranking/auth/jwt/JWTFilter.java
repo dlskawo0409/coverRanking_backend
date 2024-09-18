@@ -1,6 +1,9 @@
 package com.example.coverranking.auth.jwt;
 
 
+import com.example.coverranking.member.domain.Member;
+import com.example.coverranking.member.domain.Role;
+import com.example.coverranking.member.dto.request.CustomMemberDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,16 +55,16 @@ public class JWTFilter extends OncePerRequestFilter {
 
 
         String email = jwtUtil.getEmail(token);
-        String role = jwtUtil.getRole(token);
+        Role role = jwtUtil.getRole(token);
 
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUsername(username);
-        userEntity.setPassword("temppassword");
-        userEntity.setRole(role);
+        Member member = Member.builder()
+                .email(email)
+                .password("temppassword")
+                .role(role).build();
 
-        CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
+        CustomMemberDetails customMemberDetails = new CustomMemberDetails(member);
 
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+        Authentication authToken = new UsernamePasswordAuthenticationToken(customMemberDetails, null, customMemberDetails.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
