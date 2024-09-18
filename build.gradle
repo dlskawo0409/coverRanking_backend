@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
+    implementation 'org.springframework.security:spring-security-crypto:5.8.1' // 버전은 프로젝트에 맞게 조정하세요.
     testImplementation 'org.springframework.security:spring-security-test'
 
     compileOnly 'org.projectlombok:lombok:1.18.22'
@@ -36,6 +37,8 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.mockito:mockito-junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

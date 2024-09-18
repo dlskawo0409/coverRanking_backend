@@ -1,6 +1,7 @@
 package com.example.coverranking.member.domain;
 
 import com.example.coverranking.comment.BasicEntity;
+import com.example.coverranking.common.Image.domain.Image;
 import com.example.coverranking.common.util.RegexUtil;
 import com.example.coverranking.member.exception.MemberException.*;
 import jakarta.persistence.*;
@@ -14,7 +15,7 @@ import java.util.Objects;
 
 import static com.example.coverranking.member.exception.MemberErrorCode.*;
 
-@Table(name = "user")
+@Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
@@ -22,7 +23,6 @@ import static com.example.coverranking.member.exception.MemberErrorCode.*;
 @Builder
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "DTYPE")
 public class Member extends BasicEntity implements UserDetails  {
 
     private static final String VALID_EMAIL_URL_REGEX = "^[a-zA-Z0-9]+@[a-zA-Z]+\\.[a-zA-Z]{2,}$";
@@ -49,16 +49,18 @@ public class Member extends BasicEntity implements UserDetails  {
     private String gender;
 
     @Column(name = "PREFERRED_GENRE")
+    @Convert(converter = GenreListConverter.class)
     private ArrayList<Genre> preferredGenre;
-
-    @Column(name = "PROFILE")
-    private String profile;
 
     @Column(name = "IS_BLOCKED")
     private Blocked isBlocked;
 
     @Column(name="ROLE", nullable = false)
     private Role role;
+
+    @OneToOne
+    @JoinColumn(name = "IMAGE_ID")
+    private Image image;
 
     // 생성자에서 @Builder 제거
     public Member(String email, String password, String nickname, Role role) {
