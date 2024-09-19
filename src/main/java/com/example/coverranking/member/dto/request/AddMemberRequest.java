@@ -2,14 +2,13 @@ package com.example.coverranking.member.dto.request;
 
 import com.example.coverranking.member.domain.Gender;
 import com.example.coverranking.member.domain.Genre;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -33,7 +32,8 @@ public class AddMemberRequest {
     private final String nickname;
     private final int age;
     private final Gender gender;
-    private final ArrayList<Genre> preferredGenre;
+    @NotEmpty(message = "선호 장르는 하나 이상 선택해야 합니다.")
+    private final Set<Genre> preferredGenre;
 
 }
 

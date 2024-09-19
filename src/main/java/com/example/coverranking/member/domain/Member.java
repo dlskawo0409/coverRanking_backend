@@ -10,10 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.example.coverranking.member.exception.MemberErrorCode.*;
 
@@ -33,7 +30,7 @@ public class Member extends BasicEntity implements UserDetails  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "MEMBER_ID", updatable = false)
-    private Long id;
+    private Long memberId;
 
     @Column(name = "EMAIL", nullable = false, unique = true)
     private String email;
@@ -51,8 +48,12 @@ public class Member extends BasicEntity implements UserDetails  {
     private String gender;
 
     @Column(name = "PREFERRED_GENRE")
-    @Convert(converter = GenreListConverter.class)
-    private ArrayList<Genre> preferredGenre;
+    @ElementCollection(targetClass = Genre.class, fetch = FetchType.LAZY)
+    @CollectionTable(name = "user_preferred_genres", joinColumns = @JoinColumn(name = "MEMBER_ID"))
+    @Enumerated(EnumType.STRING)
+//    @Convert(converter = GenreListConverter.class)
+//    private ArrayList<Genre> preferredGenre;
+    private Set<Genre> preferredGenres = EnumSet.noneOf(Genre.class);
 
     @Column(name = "IS_BLOCKED")
     private Blocked isBlocked;

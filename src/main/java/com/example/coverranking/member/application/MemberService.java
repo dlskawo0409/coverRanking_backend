@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.EnumSet;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -41,7 +43,7 @@ public class MemberService {
                 .nickname(nickname)
                 .age(addmemberRequest.getAge())
                 .gender(String.valueOf(addmemberRequest.getGender()))
-                .preferredGenre(addmemberRequest.getPreferredGenre())
+                .preferredGenres(EnumSet.copyOf(addmemberRequest.getPreferredGenre()))
                 .isBlocked(Blocked.F)
                 .role(Role.USER)
                 .build());
