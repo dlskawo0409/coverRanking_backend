@@ -16,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.SignatureException;
 
 public class JWTFilter extends OncePerRequestFilter {
 
@@ -52,9 +53,11 @@ public class JWTFilter extends OncePerRequestFilter {
             //response status code
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
+        }catch(Exception e){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
 
-// 토큰이 access인지 확인 (발급시 페이로드에 명시)
+        // 토큰이 access인지 확인 (발급시 페이로드에 명시)
         String category = jwtUtil.getCategory(accessToken);
 
         if (!category.equals("access")) {
@@ -67,6 +70,8 @@ public class JWTFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
+
+
 
 
         String email = jwtUtil.getEmail(accessToken);

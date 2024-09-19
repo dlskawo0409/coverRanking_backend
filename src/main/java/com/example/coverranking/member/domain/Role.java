@@ -1,11 +1,12 @@
 package com.example.coverranking.member.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 import java.util.NoSuchElementException;
 import java.util.Arrays;
-@Getter
+
 public enum Role {
     ADMIN("ROLE_ADMIN", "운영자"),
     USER("ROLE_USER", "로그인 회원"),
@@ -24,9 +25,14 @@ public enum Role {
     @JsonCreator
     public static Role from(String input) {
         return Arrays.stream(values())
-                .filter(role -> isSameName(input, role))
+                .filter(role -> role.key.equalsIgnoreCase(input))
                 .findFirst()
                 .orElseThrow(NoSuchElementException::new);
+    }
+
+    @JsonValue
+    public String getKey() {
+        return this.key;
     }
 
     public static boolean isSameName(String input, Role role) {
