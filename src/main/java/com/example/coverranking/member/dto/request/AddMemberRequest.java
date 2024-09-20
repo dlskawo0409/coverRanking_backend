@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Set;
@@ -33,7 +34,7 @@ public class AddMemberRequest {
     private final int age;
     private final Gender gender;
     @NotEmpty(message = "선호 장르는 하나 이상 선택해야 합니다.")
-    private final Set<Genre> preferredGenre;
+    private final ArrayList<Genre> preferredGenre;
 
 }
 

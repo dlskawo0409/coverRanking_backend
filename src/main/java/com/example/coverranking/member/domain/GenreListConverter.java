@@ -6,14 +6,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Converter
-public class GenreListConverter implements AttributeConverter<List<Genre>, int> {
+public class GenreListConverter implements AttributeConverter<List<Genre>, Integer> {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public int convertToDatabaseColumn(List<Genre> attribute) {
+    public Integer convertToDatabaseColumn(List<Genre> attribute) {
         try {
             int sum = 0;
             for(Genre genre : attribute){
@@ -26,17 +27,15 @@ public class GenreListConverter implements AttributeConverter<List<Genre>, int> 
     }
 
     @Override
-    public List<Genre> convertToEntityAttribute(int i) {
-        return List.of();
-    }
-
-    @Override
-    public List<Genre> convertToEntityAttribute(String dbData) {
-        try {
-
-            return objectMapper.readValue(dbData, new TypeReference<List<Genre>>() {});
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("JSON reading error", e);
+    public List<Genre> convertToEntityAttribute(Integer sum) {
+        ArrayList<Genre> list = new ArrayList<>();
+        for (int i = 0; i < Genre.values().length; i++) {
+            if ((sum & (1 << i)) != 0) {
+                list.add(Genre.values()[i]);
+            }
         }
+        return list;
     }
+
+
 }

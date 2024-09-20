@@ -3,6 +3,7 @@ package com.example.coverranking.member.domain;
 import com.example.coverranking.comment.BasicEntity;
 import com.example.coverranking.common.Image.domain.Image;
 import com.example.coverranking.common.util.RegexUtil;
+import com.example.coverranking.follow.domain.Follow;
 import com.example.coverranking.member.exception.MemberException.*;
 import jakarta.persistence.*;
 import lombok.*;
@@ -49,8 +50,8 @@ public class Member extends BasicEntity implements UserDetails  {
 
     @Column(name = "PREFERRED_GENRE")
     @Convert(converter = GenreListConverter.class)
-//    private ArrayList<Genre> preferredGenre;
-    private int preferredGenres;
+    private ArrayList<Genre> preferredGenres;
+//    private int preferredGenres;
 
     @Column(name = "IS_BLOCKED")
     private Blocked isBlocked;
@@ -58,9 +59,16 @@ public class Member extends BasicEntity implements UserDetails  {
     @Column(name="ROLE", nullable = false)
     private Role role;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IMAGE_ID")
-    private Image image;
+    private Image profile;
+
+    @OneToMany(mappedBy = "FOLLOWING")
+    private List<Follow> following;
+
+    @OneToMany(mappedBy = "FOLLOWER")
+    private List<Follow> follower;
+
 
     // 생성자에서 @Builder 제거
     public Member(String email, String password, String nickname, Role role) {

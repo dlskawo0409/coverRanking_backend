@@ -2,12 +2,11 @@ package com.example.coverranking.member.application;
 
 
 import com.example.coverranking.common.Image.application.ImageService;
-import com.example.coverranking.common.storage.application.S3Service;
+import com.example.coverranking.member.domain.*;
+import com.example.coverranking.member.dto.response.MemberResponse;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import com.example.coverranking.member.domain.Blocked;
-import com.example.coverranking.member.domain.Member;
-import com.example.coverranking.member.domain.MemberRepository;
-import com.example.coverranking.member.domain.Role;
 import com.example.coverranking.member.dto.request.AddMemberRequest;
 import com.example.coverranking.member.exception.MemberErrorCode;
 import com.example.coverranking.member.exception.MemberException;
@@ -17,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.EnumSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -26,6 +27,9 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ImageService imageService;
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     @Transactional
     public void createMemberService(final AddMemberRequest addmemberRequest, MultipartFile multipartFile){
@@ -43,7 +47,7 @@ public class MemberService {
                 .nickname(nickname)
                 .age(addmemberRequest.getAge())
                 .gender(String.valueOf(addmemberRequest.getGender()))
-                .preferredGenres(EnumSet.copyOf(addmemberRequest.getPreferredGenre()))
+                .preferredGenres(addmemberRequest.getPreferredGenre())
                 .isBlocked(Blocked.F)
                 .role(Role.USER)
                 .build());
@@ -70,6 +74,33 @@ public class MemberService {
             return true;
         }
         return false;
+    }
+
+    public boolean DuplicateNicknameService(String nickName) {
+        try{
+            checkEmailDuplicate(nickName);
+        }catch(Exception e){
+            return true;
+        }
+        return false;
+    }
+
+    public List<MemberResponse> selectByNickname(String nickname) {
+        List<Member> members = memberRepository.findMembersByNickname(nickname);
+
+        // 엔티티를 DTO로 변환
+        List<MemberResponse> memberResponses = members.stream().map(member -> {
+            return MemberResponse.builder()
+                    .userId(member.getMemberId())
+                    .nickName(member.getNickname())
+                    .imageUrl(member.getProfile().getImageUrl())
+                    .following(member.getFollowing().stream().count())
+                    .follower(member.getFollower().stream().count())
+                    .build();
+
+        }).collect(Collectors.toList());
+
+        return memberResponses;
     }
 
 }

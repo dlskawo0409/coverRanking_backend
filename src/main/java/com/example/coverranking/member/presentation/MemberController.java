@@ -4,6 +4,7 @@ package com.example.coverranking.member.presentation;
 import com.example.coverranking.common.storage.application.S3Service;
 import com.example.coverranking.member.application.MemberService;
 import com.example.coverranking.member.dto.request.AddMemberRequest;
+import com.example.coverranking.member.dto.response.MemberResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,9 +27,15 @@ public class MemberController {
     private final MemberService memberService;
     private final S3Service s3Service;
 
+
+    @GetMapping("{name}")
+    public ResponseEntity <List<MemberResponse> > getMembers(@PathVariable String nickname){
+        List<MemberResponse> members = memberService.selectByNickname(nickname);
+        return ResponseEntity.ok(members);
+    }
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> joinMember(@Valid @RequestPart("member")AddMemberRequest addMemberRequest,
-                                      @RequestPart("image") MultipartFile multipartFile) {
+                                        @RequestPart("image") MultipartFile multipartFile) {
 
         memberService.createMemberService(addMemberRequest, multipartFile);
         return new ResponseEntity<>("회원이 성공적으로 추가되었습니다.", HttpStatus.CREATED);
@@ -47,7 +55,7 @@ public class MemberController {
 
     @PostMapping("/check-nickname")
     public ResponseEntity<Map<String, String>> checkNickname(@RequestBody Map<String, String> nicknameMap){
-        boolean isExist = memberService.DuplicateEmailService(nicknameMap.get("nickName"));
+        boolean isExist = memberService.DuplicateNicknameService(nicknameMap.get("nickName"));
 
         // 응답 객체 생성
         Map<String, String> response = new HashMap<>();
@@ -56,5 +64,7 @@ public class MemberController {
         // 200 OK 상태와 함께 응답 반환
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/")
 
 }
