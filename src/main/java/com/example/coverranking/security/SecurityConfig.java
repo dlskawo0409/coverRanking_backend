@@ -1,6 +1,7 @@
 package com.example.coverranking.security;
 
 import com.example.coverranking.auth.domain.RefreshRepository;
+import com.example.coverranking.auth.jwt.CustomLogoutFilter;
 import com.example.coverranking.auth.jwt.JWTFilter;
 import com.example.coverranking.auth.jwt.JWTUtil;
 import com.example.coverranking.auth.jwt.LoginFilter;
@@ -15,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -69,7 +71,8 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class);
-
+        http
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
 
         //세션 설정
         http
