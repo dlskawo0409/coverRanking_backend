@@ -48,12 +48,9 @@ public class Member extends BasicEntity implements UserDetails  {
     private String gender;
 
     @Column(name = "PREFERRED_GENRE")
-    @ElementCollection(targetClass = Genre.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "user_preferred_genres", joinColumns = @JoinColumn(name = "MEMBER_ID"))
-    @Enumerated(EnumType.STRING)
-//    @Convert(converter = GenreListConverter.class)
+    @Convert(converter = GenreListConverter.class)
 //    private ArrayList<Genre> preferredGenre;
-    private Set<Genre> preferredGenres = EnumSet.noneOf(Genre.class);
+    private int preferredGenres;
 
     @Column(name = "IS_BLOCKED")
     private Blocked isBlocked;

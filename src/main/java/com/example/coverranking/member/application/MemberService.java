@@ -63,4 +63,13 @@ public class MemberService {
 
     }
 
+    public boolean DuplicateEmailService(String email){
+        try{
+            checkEmailDuplicate(email);
+        }catch(Exception e){
+            return true;
+        }
+        return false;
+    }
+
 }
