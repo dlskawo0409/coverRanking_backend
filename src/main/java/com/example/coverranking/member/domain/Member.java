@@ -17,11 +17,11 @@ import static com.example.coverranking.member.exception.MemberErrorCode.*;
 
 @Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
 @Builder
-@AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Member extends BasicEntity implements UserDetails  {
 
@@ -63,10 +63,10 @@ public class Member extends BasicEntity implements UserDetails  {
     @JoinColumn(name = "IMAGE_ID")
     private Image profile;
 
-    @OneToMany(mappedBy = "FOLLOWING")
+    @OneToMany(mappedBy = "following")
     private List<Follow> following;
 
-    @OneToMany(mappedBy = "FOLLOWER")
+    @OneToMany(mappedBy = "follower")
     private List<Follow> follower;
 
 

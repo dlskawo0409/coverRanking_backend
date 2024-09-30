@@ -78,7 +78,7 @@ public class MemberService {
 
     public boolean DuplicateNicknameService(String nickName) {
         try{
-            checkEmailDuplicate(nickName);
+            checkNicknameDuplicate(nickName);
         }catch(Exception e){
             return true;
         }
@@ -86,7 +86,7 @@ public class MemberService {
     }
 
     public List<MemberResponse> selectByNickname(String nickname) {
-        List<Member> members = memberRepository.findMembersByNickname(nickname);
+        List<Member> members = memberRepository.findAllMemberByNickname(nickname);
 
         // 엔티티를 DTO로 변환
         List<MemberResponse> memberResponses = members.stream().map(member -> {

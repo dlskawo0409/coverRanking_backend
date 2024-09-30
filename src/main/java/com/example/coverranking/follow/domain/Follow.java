@@ -16,7 +16,7 @@ public class Follow {
     @JoinColumn(name = "FOLLOWING")
     private Member following;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FOLLOWER")
     private Member follower;
 

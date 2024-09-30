@@ -28,15 +28,14 @@ public class MemberController {
     private final S3Service s3Service;
 
 
-    @GetMapping("{name}")
-    public ResponseEntity <List<MemberResponse> > getMembers(@PathVariable String nickname){
+    @GetMapping("")
+    public ResponseEntity<List<MemberResponse>> getMembers(@RequestParam String nickname) {
         List<MemberResponse> members = memberService.selectByNickname(nickname);
         return ResponseEntity.ok(members);
     }
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> joinMember(@Valid @RequestPart("member")AddMemberRequest addMemberRequest,
                                         @RequestPart("image") MultipartFile multipartFile) {
-
         memberService.createMemberService(addMemberRequest, multipartFile);
         return new ResponseEntity<>("회원이 성공적으로 추가되었습니다.", HttpStatus.CREATED);
     }
@@ -65,6 +64,6 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/")
+//    @PostMapping("/")
 
 }
