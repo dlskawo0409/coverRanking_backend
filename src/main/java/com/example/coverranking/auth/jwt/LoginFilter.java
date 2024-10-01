@@ -38,9 +38,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String username = obtainUsername(request);
         String password = obtainPassword(request);
+        System.out.println(username);
+        System.out.println(password);
+
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, null);
-
         return authenticationManager.authenticate(authToken);
     }
 
@@ -74,6 +76,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
+        System.out.println("fail");
         response.setStatus(401);
     }
 
