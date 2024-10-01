@@ -3,8 +3,7 @@ package com.example.coverranking.common.Image.domain;
 import com.example.coverranking.comment.BasicEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
@@ -13,6 +12,8 @@ import java.util.UUID;
 @Entity
 @Builder
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Image extends BasicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -13,7 +13,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query(value = """
         SELECT m
         FROM Member m
-        WHERE m.nickname = :nickName
+        WHERE m.nickname like %:nickName%
         """)
     List<Member> findAllMemberByNickname(String nickName);
 

@@ -18,10 +18,10 @@ public class ImageService {
     private final S3Service s3Service;
     private final ImageRepository imageRepository;
     @Transactional
-    public void createImageService(MultipartFile multipartFile)  {
+    public Image createImageService(MultipartFile multipartFile)  {
 
         String imageName = Image.makeImageName(multipartFile);
-        imageRepository.save(Image.builder()
+        Image image = imageRepository.save(Image.builder()
                 .imageUrl(imageName).build());
         try{
             s3Service.upload(multipartFile, imageName);
@@ -29,7 +29,7 @@ public class ImageService {
 
             throw new RuntimeException(e);
         }
-
+        return image;
     }
 
 }

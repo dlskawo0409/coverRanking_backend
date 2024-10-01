@@ -59,7 +59,7 @@ public class Member extends BasicEntity implements UserDetails  {
     @Column(name="ROLE", nullable = false)
     private Role role;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne( cascade = CascadeType.ALL)
     @JoinColumn(name = "IMAGE_ID")
     private Image profile;
 

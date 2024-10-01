@@ -2,10 +2,12 @@ package com.example.coverranking.member.application;
 
 
 import com.example.coverranking.common.Image.application.ImageService;
+import com.example.coverranking.common.Image.domain.Image;
 import com.example.coverranking.member.domain.*;
 import com.example.coverranking.member.dto.response.MemberResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.hibernate.Hibernate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.example.coverranking.member.dto.request.AddMemberRequest;
 import com.example.coverranking.member.exception.MemberErrorCode;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,7 +42,7 @@ public class MemberService {
         checkEmailDuplicate(email);
         checkNicknameDuplicate(nickname);
 
-        imageService.createImageService(multipartFile);
+        Image profile = imageService.createImageService(multipartFile);
 
         memberRepository.save(Member.builder()
                 .email(email)
@@ -50,6 +53,7 @@ public class MemberService {
                 .preferredGenres(addmemberRequest.getPreferredGenre())
                 .isBlocked(Blocked.F)
                 .role(Role.USER)
+                .profile(profile)
                 .build());
 
     }
@@ -90,10 +94,11 @@ public class MemberService {
 
         // 엔티티를 DTO로 변환
         List<MemberResponse> memberResponses = members.stream().map(member -> {
+            Hibernate.initialize(member.getProfile());
             return MemberResponse.builder()
                     .userId(member.getMemberId())
                     .nickName(member.getNickname())
-                    .imageUrl(member.getProfile().getImageUrl())
+                    .imageUrl(Optional.ofNullable(member.getProfile()).map(Image::getImageUrl).orElse(null))
                     .following(member.getFollowing().stream().count())
                     .follower(member.getFollower().stream().count())
                     .build();
