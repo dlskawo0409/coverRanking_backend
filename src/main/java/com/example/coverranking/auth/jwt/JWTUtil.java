@@ -25,9 +25,6 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
     }
 
-//    public Role getRole(String token) {
-//        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", Role.class);
-//    }
     public Role getRole(String token) {
         String roleKey = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
         return Role.from(roleKey);
@@ -53,4 +50,8 @@ public class JWTUtil {
                 .signWith(secretKey)
                 .compact();
     }
+
+
+
+
 }

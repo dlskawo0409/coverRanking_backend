@@ -1,6 +1,7 @@
 package com.example.coverranking.member.presentation;
 
 
+
 import com.example.coverranking.common.storage.application.S3Service;
 import com.example.coverranking.member.application.MemberService;
 import com.example.coverranking.member.dto.request.AddMemberRequest;
@@ -11,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -64,6 +64,13 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-//    @PostMapping("/")
+    @PutMapping("/profile")
+    public ResponseEntity<Map<String, String>> modifyProfile(@RequestParam("file") MultipartFile multipartFile, @RequestHeader("Authorization") String token){
+        String url = memberService.updateProfile(token, multipartFile);
+        Map<String, String> response = new HashMap<>();
+        response.put("profile", url);
+        return ResponseEntity.ok(response);
+    }
+
 
 }

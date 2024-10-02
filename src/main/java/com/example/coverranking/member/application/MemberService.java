@@ -1,12 +1,11 @@
 package com.example.coverranking.member.application;
 
 
+import com.example.coverranking.auth.jwt.JWTUtil;
 import com.example.coverranking.common.Image.application.ImageService;
 import com.example.coverranking.common.Image.domain.Image;
 import com.example.coverranking.member.domain.*;
 import com.example.coverranking.member.dto.response.MemberResponse;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.hibernate.Hibernate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.example.coverranking.member.dto.request.AddMemberRequest;
@@ -30,8 +29,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ImageService imageService;
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final JWTUtil jwtUtil;
 
 
     @Transactional
@@ -108,4 +106,13 @@ public class MemberService {
         return memberResponses;
     }
 
+    public String updateProfile(String jwtToken,MultipartFile multipartFile){
+        String email = jwtUtil.getEmail(jwtToken);
+        checkEmailDuplicate(email);
+        Member member = memberRepository.findByEmail(email);
+        Image profile = imageService.createImageService(multipartFile);
+        member.setProfile(profile);
+        // s3 이미지 삭제도 다음에 넣도록 하자! lazy 하게 해야 해서 to do로 남겨줌
+        return profile.getImageUrl();
+    }
 }

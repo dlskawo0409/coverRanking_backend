@@ -38,9 +38,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String username = obtainUsername(request);
         String password = obtainPassword(request);
-        System.out.println(username);
-        System.out.println(password);
-
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, null);
         return authenticationManager.authenticate(authToken);
@@ -52,7 +49,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         CustomMemberDetails customMemberDetails = (CustomMemberDetails) authentication.getPrincipal();
 
         String username = customMemberDetails.getUsername();
-        System.out.println(username);
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
