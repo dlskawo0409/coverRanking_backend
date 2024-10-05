@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.coverranking.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -108,8 +110,10 @@ public class MemberService {
 
     public String updateProfile(String jwtToken,MultipartFile multipartFile){
         String email = jwtUtil.getEmail(jwtToken);
-        checkEmailDuplicate(email);
         Member member = memberRepository.findByEmail(email);
+        if(member == null){
+            throw new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email);
+        }
         Image profile = imageService.createImageService(multipartFile);
         member.setProfile(profile);
         // s3 이미지 삭제도 다음에 넣도록 하자! lazy 하게 해야 해서 to do로 남겨줌

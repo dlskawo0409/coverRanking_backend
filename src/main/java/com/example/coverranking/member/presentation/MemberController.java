@@ -65,7 +65,7 @@ public class MemberController {
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<Map<String, String>> modifyProfile(@RequestParam("file") MultipartFile multipartFile, @RequestHeader("Authorization") String token){
+    public ResponseEntity<Map<String, String>> modifyProfile(@RequestPart("image") MultipartFile multipartFile, @RequestHeader("access") String token){
         String url = memberService.updateProfile(token, multipartFile);
         Map<String, String> response = new HashMap<>();
         response.put("profile", url);
