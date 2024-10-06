@@ -4,8 +4,10 @@ package com.example.coverranking.member.presentation;
 
 import com.example.coverranking.common.storage.application.S3Service;
 import com.example.coverranking.member.application.MemberService;
+import com.example.coverranking.member.domain.Member;
 import com.example.coverranking.member.dto.request.AddMemberRequest;
 import com.example.coverranking.member.dto.response.MemberResponse;
+import com.example.coverranking.member.dto.response.MemberUpdateResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -71,6 +73,22 @@ public class MemberController {
         response.put("profile", url);
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping(
+            value = "",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseBody
+    public ResponseEntity<MemberUpdateResponse> modifyMember(
+            @RequestPart("member") AddMemberRequest addMemberRequest,
+            @RequestPart(value = "image", required = false) MultipartFile multipartFile,
+            @RequestHeader("access") String token
+    ) {
+        MemberUpdateResponse result = memberService.updateMember(addMemberRequest, multipartFile, token);
+        return ResponseEntity.ok(result);
+    }
+
 
 
 }

@@ -6,6 +6,7 @@ import com.example.coverranking.common.Image.application.ImageService;
 import com.example.coverranking.common.Image.domain.Image;
 import com.example.coverranking.member.domain.*;
 import com.example.coverranking.member.dto.response.MemberResponse;
+import com.example.coverranking.member.dto.response.MemberUpdateResponse;
 import org.hibernate.Hibernate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.example.coverranking.member.dto.request.AddMemberRequest;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.coverranking.common.util.CustomBeanUtils.copyNonNullProperties;
 import static com.example.coverranking.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
 
 @Service
@@ -119,4 +121,36 @@ public class MemberService {
         // s3 이미지 삭제도 다음에 넣도록 하자! lazy 하게 해야 해서 to do로 남겨줌
         return profile.getImageUrl();
     }
+
+
+    public MemberUpdateResponse updateMember(AddMemberRequest addMemberRequest, MultipartFile multipartFile, String jwtToken) {
+        String email = jwtUtil.getEmail(jwtToken);
+        Member member = memberRepository.findByEmail(email);
+        if (member == null) {
+            throw new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email);
+        }
+
+        // Copy non-null properties from addMemberRequest to member
+        copyNonNullProperties(addMemberRequest, member);
+
+        // Handle profile image if present
+        if (multipartFile != null && !multipartFile.isEmpty()) {
+            Image profile = imageService.createImageService(multipartFile);
+            member.setProfile(profile);
+        }
+
+        // Save the updated member
+        Member result = memberRepository.save(member);
+
+        // Build and return the response
+        return MemberUpdateResponse.builder()
+                .nickName(result.getNickname())
+                .age(result.getAge())
+                .gender(result.getGender())
+                .preferredGenres(result.getPreferredGenres())
+                .image(result.getProfile() != null ? result.getProfile().getImageUrl() : null)
+                .build();
+    }
+
+
 }
