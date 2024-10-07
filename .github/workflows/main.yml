@@ -27,35 +27,33 @@ jobs:
           --health-retries=3
 
     steps:
-    # 1. 소스 체크아웃
-    - name: Check out the repository
-      uses: actions/checkout@v4
+      # 1. 소스 체크아웃
+      - name: Check out the repository
+        uses: actions/checkout@v4
 
-    # 2. gradlew에 실행 권한 부여
-    - name: Grant execute permission for gradlew
-      run: chmod +x ./gradlew
+      # 2. gradlew에 실행 권한 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
 
-    # 3. JDK 17 설치
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'zulu'
+      # 3. JDK 17 설치
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
 
-    # 4. Gradle 빌드
-    - name: Build with Gradle
-      run: ./gradlew build
+      # 4. Gradle 빌드
+      - name: Build with Gradle
+        run: ./gradlew build
 
-    # 5. MySQL과 연결된 테스트 수행
-    - name: Run tests
-      env:
-        DB_HOST: 127.0.0.1
-        DB_PORT: 3306
-        DB_NAME: coverranking
-        DB_USER: happycat
-        DB_PASSWORD: happycat1!
-      run: |
-        # 예시로 데이터베이스 연결 확인
-        mysql --host=127.0.0.1 --port=3306 --user=happycat --password=happycat1! coverranking -e "SHOW TABLES;"
-			
-		
+      # 5. MySQL과 연결된 테스트 수행
+      - name: Run tests
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_NAME: coverranking
+          DB_USER: happycat
+          DB_PASSWORD: happycat1!
+        run: |
+          # 예시로 데이터베이스 연결 확인
+          mysql --host=127.0.0.1 --port=3306 --user=happycat --password=happycat1! coverranking -e "SHOW TABLES;"
