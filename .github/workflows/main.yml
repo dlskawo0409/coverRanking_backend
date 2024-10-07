@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: MySQL Test with Docker
 
 on:
   push:
@@ -10,8 +10,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0  # MySQL 버전 설정
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: happycat1!
+          MYSQL_DATABASE: coverranking
+          MYSQL_USER: happycat
+          MYSQL_PASSWORD: happycat1!
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
-    # 1. 소스를 체크아웃
+    # 1. 소스 체크아웃
     - name: Check out the repository
       uses: actions/checkout@v4
 
@@ -26,25 +42,20 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
 
-    # 4. 의존성 다운로드 및 빌드 (Gradle 빌드 사용)
+    # 4. Gradle 빌드
     - name: Build with Gradle
       run: ./gradlew build
 
-    # 5. Docker 로그인
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-    # 6. Docker 이미지 빌드
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_HUB_USERNAME }}/coverranking:${{ github.sha }}
-
-    # 7. Docker Hub에 이미지 푸시
-    - name: Push Docker image to Docker Hub
-      run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/coverranking:${{ github.sha }}
-
-    # 8. Docker 컨테이너 실행 (테스트용)
-    - name: Run Docker container
-      run: docker run -d -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/coverranking:${{ github.sha }}
+    # 5. MySQL과 연결된 테스트 수행
+    - name: Run tests
+      env:
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_NAME: coverranking
+        DB_USER: happycat
+        DB_PASSWORD: happycat1!
+      run: |
+        # 예시로 데이터베이스 연결 확인
+        mysql --host=127.0.0.1 --port=3306 --user=happycat --password=happycat1! coverranking -e "SHOW TABLES;"
+			
+		
