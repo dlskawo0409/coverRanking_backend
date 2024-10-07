@@ -20,6 +20,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '17'
+        distribution: 'zulu'  # 필수 입력 추가 (temurin, zulu, adopt 중 하나 선택 가능)
 
     # 3. 의존성 다운로드 및 빌드 (Gradle 빌드 사용)
     - name: Build with Gradle
