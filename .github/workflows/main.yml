@@ -1,4 +1,4 @@
-name: MySQL Test with Docker
+🚀 Deploy workflow on production environment
 
 on:
   push:
