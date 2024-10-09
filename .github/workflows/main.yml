@@ -1,4 +1,4 @@
-🚀 Deploy workflow on production environment
+name: 🚀 Deploy workflow on production environment
 
 on:
   push:
