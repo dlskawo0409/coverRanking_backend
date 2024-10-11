@@ -50,6 +50,7 @@ jobs:
       # 4. Docker 이미지를 빌드
       - name: Build Docker image
         run: |
+          ./gradlew build
           docker build -t coverranking .
           docker tag coverranking:latest 184026730085.dkr.ecr.ap-northeast-2.amazonaws.com/coverranking:latest
 
