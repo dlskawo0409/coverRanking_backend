@@ -1,50 +1,58 @@
-name: 🚀 Deploy workflow on production environment
+name: Build and Push Docker Image to AWS ECR
 
 on:
-  pull_request:
-    types: [closed]
-    branches: [ "main" ]
+  push:
+    branches:
+      - main  # 메인 브랜치에 merge될 때 트리거
 
 jobs:
-  deploy:
-    if: github.event.pull_request.merged == true
-    env:
-      ENV_PATH: .env
-      S3_BUCKET_DIR_NAME: production
-      DEPLOYMENT_GROUP_NAME: production
-    environment: production
+  build:
     runs-on: ubuntu-latest
+    env:
+      DB_ENDPOINT: ${{ secrets.DB_ENDPOINT }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      S3_ACCESSKEY: ${{ secrets.S3_ACCESSKEY }}
+      S3_SECRETKEY: ${{ secrets.S3_SECRETKEY }}
+      S3_NAME: ${{ secrets.S3_NAME }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
     steps:
-      - name: ✅ Checkout branch
-        uses: actions/checkout@v4
+      # 1. GitHub 리포지토리에서 소스 코드를 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: 🗂️ Make config folder
-        run: mkdir -p config
+      # 2. AWS ECR에 로그인
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
-      - name: ⚙️ Create .env file
+      # 3. Docker 이미지를 빌드하기 전 application.properties 파일 생성
+      - name: Create application.properties file
         run: |
-          touch ${{ env.ENV_PATH }}
-          echo DOMAIN_FIR=${{ secrets.DOMAIN_FIR }} >> ${{ env.ENV_PATH }}
-          echo SOCKET_PORT_PROD=${{ secrets.SOCKET_PORT_PROD }} >> ${{ env.ENV_PATH }}
-          echo SOCKET_PORT_TEST=${{ secrets.SOCKET_PORT_TEST }} >> ${{ env.ENV_PATH }}
+          mkdir -p src/main/resources
+          echo "spring.application.name=coverRanking" > src/main/resources/application.properties
+          echo "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver" >> src/main/resources/application.properties
+          echo "spring.datasource.url=jdbc:mysql://${DB_ENDPOINT}/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true" >> src/main/resources/application.properties
+          echo "spring.datasource.username=${DB_USERNAME}" >> src/main/resources/application.properties
+          echo "spring.datasource.password=${DB_PASSWORD}" >> src/main/resources/application.properties
+          echo "cloud.aws.region.static=ap-northeast-2" >> src/main/resources/application.properties
+          echo "cloud.aws.stack.auto=false" >> src/main/resources/application.properties
+          echo "cloud.aws.credentials.accessKey=${S3_ACCESSKEY}" >> src/main/resources/application.properties
+          echo "cloud.aws.credentials.secretKey=${S3_SECRETKEY}" >> src/main/resources/application.properties
+          echo "cloud.aws.s3.bucket=${S3_NAME}" >> src/main/resources/application.properties
+          echo "spring.jwt.secret=${JWT_SECRET}" >> src/main/resources/application.properties
 
-      - name: 📦 Zip project files
-        run: zip -r ./$GITHUB_SHA.zip .
 
-      - name: 🌎 Access to AWS
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2
 
-      - name: 🚛 Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://${{ secrets.S3_BUCKET_NAME }}/${{ env.S3_BUCKET_DIR_NAME }}/$GITHUB_SHA.zip
-
-      - name: 🚀 Deploy to EC2 with CodeDeploy
+      # 4. Docker 이미지를 빌드
+      - name: Build Docker image
         run: |
-          aws deploy create-deployment \
-            --application-name codedeploy-app \
-            --deployment-config-name CodeDeployDefault.AllAtOnce \
-            --deployment-group-name ${{ env.DEPLOYMENT_GROUP_NAME }} \
-            --s3-location bucket=${{ secrets.S3_BUCKET_NAME }},bundleType=zip,key=${{ env.S3_BUCKET_DIR_NAME }}/$GITHUB_SHA.zip
+          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/coverranking:latest .
+
+      # 5. AWS ECR에 Docker 이미지 푸시
+      - name: Push Docker image to AWS ECR
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/coverranking:latest
+
