@@ -17,6 +17,7 @@ jobs:
       S3_SECRETKEY: ${{ secrets.S3_SECRETKEY }}
       S3_NAME: ${{ secrets.S3_NAME }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      AWS_REGION: ap-northeast-2  
 
     steps:
       # 1. GitHub 리포지토리에서 소스 코드를 체크아웃
@@ -27,6 +28,8 @@ jobs:
       - name: Login to AWS ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+        with:
+          region: ${{ env.AWS_REGION }}  # AWS 리전 설정
 
       # 3. Docker 이미지를 빌드하기 전 application.properties 파일 생성
       - name: Create application.properties file
