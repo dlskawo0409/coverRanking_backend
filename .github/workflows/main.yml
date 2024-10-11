@@ -50,9 +50,9 @@ jobs:
       # 4. Docker 이미지를 빌드
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/coverranking:latest .
+          docker build -t coverranking:latest 184026730085.dkr.ecr.ap-northeast-2.amazonaws.com/coverranking:latest
 
       # 5. AWS ECR에 Docker 이미지 푸시
       - name: Push Docker image to AWS ECR
         run: |
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/coverranking:latest
+          docker push 184026730085.dkr.ecr.ap-northeast-2.amazonaws.com/coverranking:latest
