@@ -37,7 +37,7 @@ jobs:
           mkdir -p src/main/resources
           echo "spring.application.name=coverRanking" > src/main/resources/application.properties
           echo "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver" >> src/main/resources/application.properties
-          echo "spring.datasource.url=jdbc:mysql://${DB_ENDPOINT}/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true" >> src/main/resources/application.properties
+          echo "spring.datasource.url=jdbc:mysql://${DB_ENDPOINT}:3306/${DB_NAME}?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true" >> src/main/resources/application.properties
           echo "spring.datasource.username=${DB_USERNAME}" >> src/main/resources/application.properties
           echo "spring.datasource.password=${DB_PASSWORD}" >> src/main/resources/application.properties
           echo "cloud.aws.region.static=ap-northeast-2" >> src/main/resources/application.properties
