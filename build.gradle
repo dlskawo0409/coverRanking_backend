@@ -17,30 +17,7 @@ repositories {
     mavenCentral()
 }
 
-//dependencies {
-//    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-//    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//    implementation 'org.springframework.boot:spring-boot-starter-web'
-//    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-//    implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
-//    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
-//    implementation 'org.projectlombok:lombok:1.18.28'
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
-//    implementation 'org.springframework.boot:spring-boot-starter-validation'
-//    implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
-//    implementation 'org.springframework.security:spring-security-crypto:5.8.1' // 버전은 프로젝트에 맞게 조정하세요.
-//    testImplementation 'org.springframework.security:spring-security-test'
-//
-//    compileOnly 'org.projectlombok:lombok:1.18.22'
-//    runtimeOnly'org.projectlombok:lombok:1.18.22'
-//
-//    runtimeOnly 'com.mysql:mysql-connector-j'
-//    annotationProcessor 'org.projectlombok:lombok:1.18.22'
-//    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-//    testImplementation 'org.mockito:mockito-core'
-//    testImplementation 'org.mockito:mockito-junit-jupiter'
-//    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-//}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -56,7 +33,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.28'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
 
-    runtimeOnly 'com.mysql:mysql-connector-j:8.0.32'
+    runtimeOnly 'com.mysql:mysql-connector-j:8.0.33'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mockito:mockito-core'
