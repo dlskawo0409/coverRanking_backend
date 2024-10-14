@@ -4,12 +4,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 @MappedSuperclass
 @Setter
+@Getter
 public abstract class BasicEntity {
     @Column(name = "CREATED_AT", nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -46,4 +48,6 @@ public abstract class BasicEntity {
     protected void onUpdate() {
         this.updated_at = LocalDateTime.now();
     }
+
+
 }
