@@ -4,7 +4,7 @@ package com.example.coverranking.member.presentation;
 
 import com.example.coverranking.common.storage.application.S3Service;
 import com.example.coverranking.member.application.MemberService;
-import com.example.coverranking.member.domain.Member;
+import com.example.coverranking.member.exception.MemberException.MemberConflictException;
 import com.example.coverranking.member.dto.request.AddMemberRequest;
 import com.example.coverranking.member.dto.response.MemberResponse;
 import com.example.coverranking.member.dto.response.MemberUpdateResponse;
@@ -38,7 +38,11 @@ public class MemberController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> joinMember(@Valid @RequestPart("member")AddMemberRequest addMemberRequest,
                                         @RequestPart("image") MultipartFile multipartFile) {
-        memberService.createMemberService(addMemberRequest, multipartFile);
+        try {
+            memberService.createMemberService(addMemberRequest, multipartFile);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+        }
         return new ResponseEntity<>("회원이 성공적으로 추가되었습니다.", HttpStatus.CREATED);
     }
 
@@ -89,6 +93,12 @@ public class MemberController {
         return ResponseEntity.ok(result);
     }
 
-
+    @DeleteMapping("")
+    public ResponseEntity<Map<String, String>> deleteMember(@RequestHeader("access") String token){
+        String result = memberService.deleteMember(token);
+        Map<String, String> response = new HashMap<>();
+        response.put("userState", result);
+        return ResponseEntity.ok(response);
+    }
 
 }

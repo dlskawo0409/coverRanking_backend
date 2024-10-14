@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
@@ -95,17 +96,20 @@ public class MemberService {
         List<Member> members = memberRepository.findAllMemberByNickname(nickname);
 
         // 엔티티를 DTO로 변환
-        List<MemberResponse> memberResponses = members.stream().map(member -> {
-            Hibernate.initialize(member.getProfile());
-            return MemberResponse.builder()
-                    .userId(member.getMemberId())
-                    .nickName(member.getNickname())
-                    .imageUrl(Optional.ofNullable(member.getProfile()).map(Image::getImageUrl).orElse(null))
-                    .following(member.getFollowing().stream().count())
-                    .follower(member.getFollower().stream().count())
-                    .build();
+        List<MemberResponse> memberResponses = members.stream()
+                .filter(member -> member.getDeleted_at() == null)
+                .map(member -> {
+                    Hibernate.initialize(member.getProfile());
+                    return MemberResponse.builder()
+                            .userId(member.getMemberId())
+                            .nickName(member.getNickname())
+                            .imageUrl(Optional.ofNullable(member.getProfile()).map(Image::getImageUrl).orElse(null))
+                            .following(member.getFollowing().stream().count())
+                            .follower(member.getFollower().stream().count())
+                            .build();
+                })
+                .collect(Collectors.toList());
 
-        }).collect(Collectors.toList());
 
         return memberResponses;
     }
@@ -152,5 +156,17 @@ public class MemberService {
                 .build();
     }
 
+    public String deleteMember(String token) {
+        String email = jwtUtil.getEmail(token);
+        Member member = memberRepository.findByEmail(email);
+
+        if(member == null){
+            throw new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email);
+        }
+
+        member.setDeleted_at(LocalDateTime.now());
+        Member result = memberRepository.save(member);
+        return "non-active";
+    }
 
 }
