@@ -13,7 +13,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,7 +29,7 @@ public class FollowService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void getFollowByMemberId(Long memberId, String token){
+    public void followingByMemberId(Long memberId, String token){
         String email = jwtUtil.getEmail(token);
 
         Member follower = Optional.ofNullable(memberRepository.findByEmail(email))
@@ -39,7 +38,9 @@ public class FollowService {
         Member following = Optional.ofNullable(memberRepository.findByMemberId(memberId))
                 .orElseThrow(()-> new MemberException.MemberConflictException(MEMBER_NOT_FOUND.MEMBER_NOT_FOUND, Long.toString(memberId)));
 
-
+        if(follower.equals(following)){
+            throw new FollowException.FollowBadRequestException(FollowErrorCode.FOLLOW_SELF);
+        }
 
         if(followRepository.findByFollowingAndFollower(following, follower) != null){
             throw new FollowException.FollowBadRequestException(FollowErrorCode.ALREADY_FOLLOW);
@@ -52,11 +53,11 @@ public class FollowService {
 
     }
 
-    public List<MemberFollowingsResponse> getFollowByNickName(String nickName) {
+    public List<MemberFollowingsResponse> getFollowingsByNickName(String nickname) {
 
-        Member follower = Optional.ofNullable(memberRepository.findOneMemberByNickname(nickName))
-                .orElseThrow(() -> new MemberException.MemberConflictException(MEMBER_NOT_FOUND.MEMBER_NOT_FOUND, nickName));
-
+        Member follower = Optional.ofNullable(memberRepository.findOneMemberByNickname(nickname))
+                .orElseThrow(() -> new MemberException.MemberConflictException(MEMBER_NOT_FOUND.MEMBER_NOT_FOUND, nickname));
+        System.out.println(follower.getNickname());
 
         List<Follow> follows =  followRepository.findByFollower(follower);
         List<MemberFollowingsResponse> result = follows.stream()

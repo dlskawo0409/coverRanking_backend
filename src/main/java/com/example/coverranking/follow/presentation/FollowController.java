@@ -22,7 +22,7 @@ public class FollowController {
     @PostMapping("")
     public ResponseEntity<?> followingController(@RequestHeader("access") String token, @RequestBody Map<String, Long> memberIdMap) {
         try{
-            followService.getFollowByMemberId(memberIdMap.get("memberId"), token);
+            followService.followingByMemberId(memberIdMap.get("memberId"), token);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
@@ -30,11 +30,12 @@ public class FollowController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> getFollowings(@RequestParam String nickName) {
-
+    public ResponseEntity<?> getFollowings(@RequestParam String nickname) {
+        System.out.println(nickname);
         List<MemberFollowingsResponse> result;
         try {
-            result = followService.getFollowByNickName(nickName);
+            System.out.println("try");
+            result = followService.getFollowingsByNickName(nickname);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }

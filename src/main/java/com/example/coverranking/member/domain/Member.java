@@ -112,6 +112,19 @@ public class Member extends BasicEntity implements UserDetails  {
         return true;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Member member = (Member) o;
+        return memberId.equals(member.memberId) && email.equals(member.email) && nickname.equals(member.nickname);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(memberId, email, nickname);
+    }
+
     private static void validateNickName(String nickName) throws MemberBadRequestException {
         if (Objects.isNull(nickName)) {
             throw new MemberBadRequestException(ILLEGAL_NICKNAME_NULL);
