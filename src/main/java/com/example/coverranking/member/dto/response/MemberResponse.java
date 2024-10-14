@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Builder
 public class MemberResponse {
-    private Long userId;
+    private Long memberId;
     private String nickName;
     private String imageUrl;
     private Long following;

@@ -101,7 +101,7 @@ public class MemberService {
                 .map(member -> {
                     Hibernate.initialize(member.getProfile());
                     return MemberResponse.builder()
-                            .userId(member.getMemberId())
+                            .memberId(member.getMemberId())
                             .nickName(member.getNickname())
                             .imageUrl(Optional.ofNullable(member.getProfile()).map(Image::getImageUrl).orElse(null))
                             .following(member.getFollowing().stream().count())
