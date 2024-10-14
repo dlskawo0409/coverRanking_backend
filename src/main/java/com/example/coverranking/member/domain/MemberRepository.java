@@ -19,6 +19,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
         """)
     List<Member> findAllMemberByNickname(String nickName);
 
-
+    Member findOneMemberByNickname(String nickName);
 
 }

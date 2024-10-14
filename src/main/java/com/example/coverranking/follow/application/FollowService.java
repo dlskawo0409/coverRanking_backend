@@ -3,6 +3,7 @@ package com.example.coverranking.follow.application;
 import com.example.coverranking.auth.jwt.JWTUtil;
 import com.example.coverranking.follow.domain.Follow;
 import com.example.coverranking.follow.domain.FollowRepository;
+import com.example.coverranking.follow.dto.response.MemberFollowingsResponse;
 import com.example.coverranking.follow.exception.FollowErrorCode;
 import com.example.coverranking.follow.exception.FollowException;
 import com.example.coverranking.member.domain.Member;
@@ -11,6 +12,11 @@ import com.example.coverranking.member.exception.MemberException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.example.coverranking.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
 
@@ -24,20 +30,16 @@ public class FollowService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void followByMemberId(Long memberId, String token){
+    public void getFollowByMemberId(Long memberId, String token){
         String email = jwtUtil.getEmail(token);
 
-        Member follower = memberRepository.findByEmail(email);
+        Member follower = Optional.ofNullable(memberRepository.findByEmail(email))
+                .orElseThrow(() -> new MemberException.MemberConflictException(MEMBER_NOT_FOUND.MEMBER_NOT_FOUND, email));
 
-        if(follower == null){
-            throw new MemberException.MemberConflictException(MEMBER_NOT_FOUND.MEMBER_NOT_FOUND, email);
-        }
+        Member following = Optional.ofNullable(memberRepository.findByMemberId(memberId))
+                .orElseThrow(()-> new MemberException.MemberConflictException(MEMBER_NOT_FOUND.MEMBER_NOT_FOUND, Long.toString(memberId)));
 
-        Member following = memberRepository.findByMemberId(memberId);
 
-        if(following == null){
-            throw new MemberException.MemberConflictException(MEMBER_NOT_FOUND.MEMBER_NOT_FOUND, Long.toString(memberId));
-        }
 
         if(followRepository.findByFollowingAndFollower(following, follower) != null){
             throw new FollowException.FollowBadRequestException(FollowErrorCode.ALREADY_FOLLOW);
@@ -49,5 +51,25 @@ public class FollowService {
                 .build());
 
     }
+
+    public List<MemberFollowingsResponse> getFollowByNickName(String nickName) {
+
+        Member follower = Optional.ofNullable(memberRepository.findOneMemberByNickname(nickName))
+                .orElseThrow(() -> new MemberException.MemberConflictException(MEMBER_NOT_FOUND.MEMBER_NOT_FOUND, nickName));
+
+
+        List<Follow> follows =  followRepository.findByFollower(follower);
+        List<MemberFollowingsResponse> result = follows.stream()
+                .map(follow -> MemberFollowingsResponse.builder()
+                        .memberId(follow.getFollowing().getMemberId())
+                        .nickName(follow.getFollowing().getNickname())
+                        .profile(follow.getFollowing().getProfile().getImageUrl())
+                        .build())
+                .collect(Collectors.toList());
+
+
+        return result;
+    }
+
 
 }

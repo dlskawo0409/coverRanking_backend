@@ -2,14 +2,12 @@ package com.example.coverranking.follow.domain;
 
 import com.example.coverranking.member.domain.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Getter
 @Entity
 public class Follow {
     @Id
