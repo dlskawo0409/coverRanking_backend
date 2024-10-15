@@ -31,10 +31,8 @@ public class FollowController {
 
     @GetMapping("")
     public ResponseEntity<?> getFollowings(@RequestParam String nickname) {
-        System.out.println(nickname);
         List<MemberFollowingsResponse> result;
         try {
-            System.out.println("try");
             result = followService.getFollowingsByNickName(nickname);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);

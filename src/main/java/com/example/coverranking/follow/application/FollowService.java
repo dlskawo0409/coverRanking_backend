@@ -57,7 +57,6 @@ public class FollowService {
 
         Member follower = Optional.ofNullable(memberRepository.findOneMemberByNickname(nickname))
                 .orElseThrow(() -> new MemberException.MemberConflictException(MEMBER_NOT_FOUND.MEMBER_NOT_FOUND, nickname));
-        System.out.println(follower.getNickname());
 
         List<Follow> follows =  followRepository.findByFollower(follower);
         List<MemberFollowingsResponse> result = follows.stream()
