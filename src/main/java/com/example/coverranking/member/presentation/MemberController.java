@@ -29,12 +29,12 @@ public class MemberController {
     private final MemberService memberService;
     private final S3Service s3Service;
 
-
     @GetMapping("")
     public ResponseEntity<List<MemberResponse>> getMembers(@RequestParam String nickname) {
         List<MemberResponse> members = memberService.selectByNickname(nickname);
         return ResponseEntity.ok(members);
     }
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> joinMember(@Valid @RequestPart("member")AddMemberRequest addMemberRequest,
                                         @RequestPart("image") MultipartFile multipartFile) {
@@ -67,7 +67,10 @@ public class MemberController {
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<Map<String, String>> modifyProfile(@RequestPart("image") MultipartFile multipartFile, @RequestHeader("access") String token){
+    public ResponseEntity<Map<String, String>> modifyProfile(
+            @RequestPart("image") MultipartFile multipartFile,
+            @RequestHeader("access") String token
+    ){
         String url = memberService.updateProfile(token, multipartFile);
         Map<String, String> response = new HashMap<>();
         response.put("profile", url);

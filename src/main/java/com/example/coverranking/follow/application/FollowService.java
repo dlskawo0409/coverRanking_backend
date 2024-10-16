@@ -71,5 +71,9 @@ public class FollowService {
         return result;
     }
 
+//    public void unFollow(String token, String nickname){
+//        Member follower = memberRepository.findByEmail(jwo)
+//    }
+
 
 }
