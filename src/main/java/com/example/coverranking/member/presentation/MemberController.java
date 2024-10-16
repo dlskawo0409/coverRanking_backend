@@ -38,11 +38,7 @@ public class MemberController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> joinMember(@Valid @RequestPart("member")AddMemberRequest addMemberRequest,
                                         @RequestPart("image") MultipartFile multipartFile) {
-        try {
-            memberService.createMemberService(addMemberRequest, multipartFile);
-        }catch (Exception e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
-        }
+        memberService.createMemberService(addMemberRequest, multipartFile);
         return new ResponseEntity<>("회원이 성공적으로 추가되었습니다.", HttpStatus.CREATED);
     }
 
