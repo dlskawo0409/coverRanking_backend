@@ -74,7 +74,7 @@ public class MemberService {
 
     }
 
-    public boolean DuplicateEmailService(String email){
+    public boolean duplicateEmailService(String email){
         try{
             checkEmailDuplicate(email);
         }catch(Exception e){
@@ -83,7 +83,7 @@ public class MemberService {
         return false;
     }
 
-    public boolean DuplicateNicknameService(String nickName) {
+    public boolean duplicateNicknameService(String nickName) {
         try{
             checkNicknameDuplicate(nickName);
         }catch(Exception e){
