@@ -13,8 +13,7 @@ public enum MemberErrorCode {
     FORBIDDEN_ACCESS("05101", "해당 회원 정보에 대한 접근 권한이 없습니다."),
     MEMBER_NOT_FOUND("05400", "존재하지 않는 회원입니다."),
     MEMBER_ALREADY_EXIST("05401", "이미 가입된 이메일입니다."),
-    ILLEGAL_NICKNAME_ALREADY_EXISTS("05900", "이미 존재하는 닉네임입니다."),
-    ;
+    ILLEGAL_NICKNAME_ALREADY_EXISTS("05900", "이미 존재하는 닉네임입니다.");
 
     private final String code;
     private final String message;

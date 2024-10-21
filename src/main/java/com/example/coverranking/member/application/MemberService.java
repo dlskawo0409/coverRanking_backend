@@ -116,9 +116,8 @@ public class MemberService {
     }
 
     public String updateProfile(CustomMemberDetails loginMember, MultipartFile multipartFile){
-        String email = loginMember.getMember().getEmail();
-        Member member = Optional.ofNullable(memberRepository.findByEmail(email))
-                .orElseThrow(()->new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email));
+        Member member = Optional.ofNullable(loginMember.getMember())
+                .orElseThrow(()->new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, loginMember.getMember().getEmail()));
 
         Image profile = imageService.createImageService(multipartFile);
         member.setProfile(profile);
@@ -128,9 +127,8 @@ public class MemberService {
 
 
     public MemberUpdateResponse updateMember(AddMemberRequest addMemberRequest, MultipartFile multipartFile, CustomMemberDetails loginMember) {
-        String email = loginMember.getMember().getEmail();
-        Member member = Optional.ofNullable(memberRepository.findByEmail(email))
-                .orElseThrow(()->new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email));
+        Member member = Optional.ofNullable(loginMember.getMember())
+                .orElseThrow(()->new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, loginMember.getMember().getEmail()));
 
         // Copy non-null properties from addMemberRequest to member
         copyNonNullProperties(addMemberRequest, member);
@@ -155,9 +153,8 @@ public class MemberService {
     }
 
     public String deleteMember(CustomMemberDetails loginMember) {
-        String email = loginMember.getMember().getEmail();
-        Member member = Optional.ofNullable(memberRepository.findByEmail(email))
-                .orElseThrow(()->new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email));
+        Member member = Optional.ofNullable(loginMember.getMember())
+                .orElseThrow(()->new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, loginMember.getMember().getEmail()));
 
         member.setDeleted_at(LocalDateTime.now());
         Member result = memberRepository.save(member);

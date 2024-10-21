@@ -1,6 +1,7 @@
 package com.example.coverranking.follow.presentation;
 
 import com.example.coverranking.follow.application.FollowService;
+import com.example.coverranking.follow.dto.response.FollowingDeleteResponse;
 import com.example.coverranking.follow.dto.response.MemberFollowingsResponse;
 import com.example.coverranking.member.dto.request.CustomMemberDetails;
 import com.example.coverranking.member.exception.MemberException;
@@ -40,10 +41,10 @@ public class FollowController {
 
     @DeleteMapping("")
     public ResponseEntity<?> removeFollowings(@AuthenticationPrincipal CustomMemberDetails loginMember,
-                                              @RequestParam String nickname){
-        String result = followService.deleteFollowing();
-        var followingDeleteResponse.from(result);
-        return ResponseEntity(followingDeleteResponse, HttpStatus.OK);
+                                              @RequestParam Long memberId){
+        String result = followService.deleteFollowing(loginMember, memberId);
+        var followingDeleteResponse = FollowingDeleteResponse.from(result);
+        return new ResponseEntity<>(followingDeleteResponse, HttpStatus.OK);
     }
 
 

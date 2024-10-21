@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,8 +73,23 @@ public class FollowService {
         return result;
     }
 
-    public String deleteFollowing(CustomMemberDetails loginMember, String nickName){
+    // 영속성을 유지해야 삭제할 수 있다.
+    @Transactional
+    public String deleteFollowing(CustomMemberDetails loginMember, Long memberId){
 
+        Member follower = Optional.ofNullable(memberRepository.findByEmail(loginMember.getMember().getEmail()))
+                .orElseThrow(() -> new MemberException.MemberConflictException(MEMBER_NOT_FOUND.MEMBER_NOT_FOUND, loginMember.getMember().getEmail()));
+
+
+        Member following = Optional.ofNullable(memberRepository.findByMemberId(memberId))
+                .orElseThrow(() -> new MemberException.MemberConflictException(MEMBER_NOT_FOUND.MEMBER_NOT_FOUND, String.valueOf(memberId)));
+
+        if(follower.getEmail().equals(following.getEmail())){
+            throw  new FollowException.FollowBadRequestException(FollowErrorCode.UNFOLLOW_SELF);
+        }
+
+        followRepository.deleteByFollowerAndFollowing(follower, following);
+        return following.getNickname();
     }
 
 
