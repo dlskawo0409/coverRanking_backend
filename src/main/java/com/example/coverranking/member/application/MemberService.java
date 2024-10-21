@@ -40,9 +40,9 @@ public class MemberService {
 
     @Transactional
     public void createMemberService(final AddMemberRequest addmemberRequest, MultipartFile multipartFile){
-        String email = addmemberRequest.getEmail();
-        String password = addmemberRequest.getPassword();
-        String nickname = addmemberRequest.getNickname();
+        String email = addmemberRequest.email();
+        String password = addmemberRequest.password();
+        String nickname = addmemberRequest.nickname();
         checkEmailDuplicate(email);
         checkNicknameDuplicate(nickname);
 
@@ -52,13 +52,14 @@ public class MemberService {
                 .email(email)
                 .password(bCryptPasswordEncoder.encode(password))
                 .nickname(nickname)
-                .age(addmemberRequest.getAge())
-                .gender(String.valueOf(addmemberRequest.getGender()))
-                .preferredGenres(addmemberRequest.getPreferredGenre())
+                .age(addmemberRequest.age())
+                .gender(String.valueOf(addmemberRequest.gender()))
+                .preferredGenres(addmemberRequest.preferredGenre())
                 .isBlocked(Blocked.F)
                 .role(Role.USER)
                 .profile(profile)
                 .build());
+
 
     }
 

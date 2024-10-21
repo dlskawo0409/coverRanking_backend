@@ -48,10 +48,13 @@ public class Member extends BasicEntity implements UserDetails  {
     @Column(name = "GENDER")
     private String gender;
 
+
+    @ElementCollection(targetClass = Genre.class)
+    @CollectionTable(name = "MEMBER_PREFERRED_GENRES", joinColumns = @JoinColumn(name = "MEMBER_ID"))
+    @Enumerated(EnumType.STRING)
     @Column(name = "PREFERRED_GENRE")
-    @Convert(converter = GenreListConverter.class)
-    private ArrayList<Genre> preferredGenres;
-//    private int preferredGenres;
+    private List<Genre> preferredGenres;
+
 
     @Column(name = "IS_BLOCKED")
     private Blocked isBlocked;
