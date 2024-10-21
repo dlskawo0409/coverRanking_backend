@@ -8,6 +8,7 @@ import com.example.coverranking.follow.exception.FollowErrorCode;
 import com.example.coverranking.follow.exception.FollowException;
 import com.example.coverranking.member.domain.Member;
 import com.example.coverranking.member.domain.MemberRepository;
+import com.example.coverranking.member.dto.request.CustomMemberDetails;
 import com.example.coverranking.member.exception.MemberException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,8 @@ public class FollowService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void followingByMemberId(Long memberId, String token){
-        String email = jwtUtil.getEmail(token);
+    public void followingByMemberId(CustomMemberDetails loginMember, Long memberId){
+        String email = loginMember.getMember().getEmail();
 
         Member follower = Optional.ofNullable(memberRepository.findByEmail(email))
                 .orElseThrow(() -> new MemberException.MemberConflictException(MEMBER_NOT_FOUND.MEMBER_NOT_FOUND, email));
@@ -71,9 +72,9 @@ public class FollowService {
         return result;
     }
 
-//    public void unFollow(String token, String nickname){
-//        Member follower = memberRepository.findByEmail(jwo)
-//    }
+    public String deleteFollowing(CustomMemberDetails loginMember, String nickName){
+
+    }
 
 
 }

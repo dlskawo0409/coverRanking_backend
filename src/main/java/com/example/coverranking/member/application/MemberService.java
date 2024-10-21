@@ -5,6 +5,7 @@ import com.example.coverranking.auth.jwt.JWTUtil;
 import com.example.coverranking.common.Image.application.ImageService;
 import com.example.coverranking.common.Image.domain.Image;
 import com.example.coverranking.member.domain.*;
+import com.example.coverranking.member.dto.request.CustomMemberDetails;
 import com.example.coverranking.member.dto.response.MemberResponse;
 import com.example.coverranking.member.dto.response.MemberUpdateResponse;
 import org.hibernate.Hibernate;
@@ -114,8 +115,8 @@ public class MemberService {
         return memberResponses;
     }
 
-    public String updateProfile(String jwtToken,MultipartFile multipartFile){
-        String email = jwtUtil.getEmail(jwtToken);
+    public String updateProfile(CustomMemberDetails loginMember, MultipartFile multipartFile){
+        String email = loginMember.getMember().getEmail();
         Member member = Optional.ofNullable(memberRepository.findByEmail(email))
                 .orElseThrow(()->new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email));
 
@@ -126,8 +127,8 @@ public class MemberService {
     }
 
 
-    public MemberUpdateResponse updateMember(AddMemberRequest addMemberRequest, MultipartFile multipartFile, String jwtToken) {
-        String email = jwtUtil.getEmail(jwtToken);
+    public MemberUpdateResponse updateMember(AddMemberRequest addMemberRequest, MultipartFile multipartFile, CustomMemberDetails loginMember) {
+        String email = loginMember.getMember().getEmail();
         Member member = Optional.ofNullable(memberRepository.findByEmail(email))
                 .orElseThrow(()->new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email));
 
@@ -153,8 +154,8 @@ public class MemberService {
                 .build();
     }
 
-    public String deleteMember(String token) {
-        String email = jwtUtil.getEmail(token);
+    public String deleteMember(CustomMemberDetails loginMember) {
+        String email = loginMember.getMember().getEmail();
         Member member = Optional.ofNullable(memberRepository.findByEmail(email))
                 .orElseThrow(()->new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email));
 

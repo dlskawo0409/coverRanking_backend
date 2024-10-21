@@ -25,9 +25,9 @@ public class FollowController {
     private final FollowService followService;
 
     @PostMapping("")
-    public ResponseEntity<?> followingController(@RequestHeader("access") String token, @RequestBody Map<String, Long> memberIdMap, @AuthenticationPrincipal CustomMemberDetails loginMember) {
-        log.info("member.name : {}", loginMember.getMember().getEmail());
-        followService.followingByMemberId(memberIdMap.get("memberId"), token);
+    public ResponseEntity<?> followingController(@AuthenticationPrincipal CustomMemberDetails loginMember,
+                                                 @RequestBody Map<String, Long> memberIdMap) {
+        followService.followingByMemberId(loginMember, memberIdMap.get("memberId"));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -36,6 +36,14 @@ public class FollowController {
         List<MemberFollowingsResponse> result = followService.getFollowingsByNickName(nickname);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<?> removeFollowings(@AuthenticationPrincipal CustomMemberDetails loginMember,
+                                              @RequestParam String nickname){
+        String result = followService.deleteFollowing();
+        var followingDeleteResponse.from(result);
+        return ResponseEntity(followingDeleteResponse, HttpStatus.OK);
     }
 
 

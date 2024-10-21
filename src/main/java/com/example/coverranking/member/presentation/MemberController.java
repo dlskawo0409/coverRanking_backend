@@ -4,20 +4,20 @@ package com.example.coverranking.member.presentation;
 
 import com.example.coverranking.common.storage.application.S3Service;
 import com.example.coverranking.member.application.MemberService;
-import com.example.coverranking.member.dto.request.MemberEmail;
-import com.example.coverranking.member.dto.request.MemberNickName;
+import com.example.coverranking.member.dto.request.CustomMemberDetails;
+import com.example.coverranking.member.dto.request.MemberEmailExistRequest;
+import com.example.coverranking.member.dto.request.MemberNickNameExistRequest;
 
-import com.example.coverranking.member.dto.response.MemberNickNameExistResponse;
+import com.example.coverranking.member.dto.response.*;
 
 import com.example.coverranking.member.dto.request.AddMemberRequest;
-import com.example.coverranking.member.dto.response.MemberResponse;
-import com.example.coverranking.member.dto.response.MemberUpdateResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,28 +47,25 @@ public class MemberController {
     }
 
     @PostMapping("/check-email")
-    public ResponseEntity<?> checkEmail(@RequestBody MemberEmail memberEmail){
-        var memberExistResponse = memberService.duplicateEmailService(memberEmail.getEmail());
+    public ResponseEntity<?> checkEmail(@RequestBody MemberEmailExistRequest memberEmailExistRequest){
+        boolean isExist = memberService.duplicateEmailService(memberEmailExistRequest.email());
+        var memberExistResponse = MemberEmailExistResponse.from(isExist);
         return ResponseEntity.ok(memberExistResponse);
     }
 
     @PostMapping("/check-nickname")
-    public ResponseEntity<?> checkNickname(@RequestBody MemberNickName memberNickName){
-        boolean isExist = memberService.duplicateNicknameService(memberNickName.getNickName());
-
-        // 200 OK 상태와 함께 응답 반환
+    public ResponseEntity<?> checkNickname(@RequestBody MemberNickNameExistRequest memberNickNameExistRequest){
+        boolean isExist = memberService.duplicateNicknameService(memberNickNameExistRequest.nickName());
         return ResponseEntity.ok(new MemberNickNameExistResponse(isExist));
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<Map<String, String>> modifyProfile(
+    public ResponseEntity<?> modifyProfile(
             @RequestPart("image") MultipartFile multipartFile,
-            @RequestHeader("access") String token
+            @AuthenticationPrincipal CustomMemberDetails loginMember
     ){
-        String url = memberService.updateProfile(token, multipartFile);
-        Map<String, String> response = new HashMap<>();
-        response.put("profile", url);
-        return ResponseEntity.ok(response);
+        var memberProfileUpdateResponse = memberService.updateProfile(loginMember, multipartFile);
+        return ResponseEntity.ok(memberProfileUpdateResponse);
     }
 
     @PutMapping(
@@ -77,21 +74,20 @@ public class MemberController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    public ResponseEntity<MemberUpdateResponse> modifyMember(
+    public ResponseEntity<?> modifyMember(
             @RequestPart("member") AddMemberRequest addMemberRequest,
             @RequestPart(value = "image", required = false) MultipartFile multipartFile,
-            @RequestHeader("access") String token
+            @AuthenticationPrincipal CustomMemberDetails loginMember
     ) {
-        MemberUpdateResponse result = memberService.updateMember(addMemberRequest, multipartFile, token);
-        return ResponseEntity.ok(result);
+        var memberUpdateResponse = memberService.updateMember(addMemberRequest, multipartFile, loginMember);
+        return ResponseEntity.ok(memberUpdateResponse);
     }
 
     @DeleteMapping("")
-    public ResponseEntity<Map<String, String>> deleteMember(@RequestHeader("access") String token){
-        String result = memberService.deleteMember(token);
-        Map<String, String> response = new HashMap<>();
-        response.put("userState", result);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> removeMember(@AuthenticationPrincipal CustomMemberDetails loginMember){
+        String result = memberService.deleteMember(loginMember);
+        var memberDeleteResponse = MemberDeleteResponse.from(result);
+        return ResponseEntity.ok(memberDeleteResponse);
     }
 
 }
