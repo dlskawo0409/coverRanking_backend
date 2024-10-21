@@ -4,8 +4,11 @@ package com.example.coverranking.member.presentation;
 
 import com.example.coverranking.common.storage.application.S3Service;
 import com.example.coverranking.member.application.MemberService;
-import com.example.coverranking.member.dto.response.MemberExistResponse;
-import com.example.coverranking.member.exception.MemberException.MemberConflictException;
+import com.example.coverranking.member.dto.request.MemberEmail;
+import com.example.coverranking.member.dto.request.MemberNickName;
+
+import com.example.coverranking.member.dto.response.MemberNickNameExistResponse;
+
 import com.example.coverranking.member.dto.request.AddMemberRequest;
 import com.example.coverranking.member.dto.response.MemberResponse;
 import com.example.coverranking.member.dto.response.MemberUpdateResponse;
@@ -44,21 +47,17 @@ public class MemberController {
     }
 
     @PostMapping("/check-email")
-    public ResponseEntity<?> checkEmail(@RequestBody Map<String, String> emailMap){
-        var memberExistResponse = memberService.duplicateEmailService(emailMap.get("email"));
+    public ResponseEntity<?> checkEmail(@RequestBody MemberEmail memberEmail){
+        var memberExistResponse = memberService.duplicateEmailService(memberEmail.getEmail());
         return ResponseEntity.ok(memberExistResponse);
     }
 
     @PostMapping("/check-nickname")
-    public ResponseEntity<Map<String, String>> checkNickname(@RequestBody Map<String, String> nicknameMap){
-        boolean isExist = memberService.duplicateNicknameService(nicknameMap.get("nickName"));
-
-        // 응답 객체 생성
-        Map<String, String> response = new HashMap<>();
-        response.put("isExist", isExist ? "true" : "false");
+    public ResponseEntity<?> checkNickname(@RequestBody MemberNickName memberNickName){
+        boolean isExist = memberService.duplicateNicknameService(memberNickName.getNickName());
 
         // 200 OK 상태와 함께 응답 반환
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new MemberNickNameExistResponse(isExist));
     }
 
     @PutMapping("/profile")
