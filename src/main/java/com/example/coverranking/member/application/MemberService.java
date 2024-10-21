@@ -74,7 +74,7 @@ public class MemberService {
 
     }
 
-    public boolean DuplicateEmailService(String email){
+    public boolean duplicateEmailService(String email){
         try{
             checkEmailDuplicate(email);
         }catch(Exception e){
@@ -83,7 +83,7 @@ public class MemberService {
         return false;
     }
 
-    public boolean DuplicateNicknameService(String nickName) {
+    public boolean duplicateNicknameService(String nickName) {
         try{
             checkNicknameDuplicate(nickName);
         }catch(Exception e){
@@ -101,7 +101,7 @@ public class MemberService {
                 .map(member -> {
                     Hibernate.initialize(member.getProfile());
                     return MemberResponse.builder()
-                            .userId(member.getMemberId())
+                            .memberId(member.getMemberId())
                             .nickName(member.getNickname())
                             .imageUrl(Optional.ofNullable(member.getProfile()).map(Image::getImageUrl).orElse(null))
                             .following(member.getFollowing().stream().count())
@@ -116,10 +116,9 @@ public class MemberService {
 
     public String updateProfile(String jwtToken,MultipartFile multipartFile){
         String email = jwtUtil.getEmail(jwtToken);
-        Member member = memberRepository.findByEmail(email);
-        if(member == null){
-            throw new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email);
-        }
+        Member member = Optional.ofNullable(memberRepository.findByEmail(email))
+                .orElseThrow(()->new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email));
+
         Image profile = imageService.createImageService(multipartFile);
         member.setProfile(profile);
         // s3 이미지 삭제도 다음에 넣도록 하자! lazy 하게 해야 해서 to do로 남겨줌
@@ -129,10 +128,8 @@ public class MemberService {
 
     public MemberUpdateResponse updateMember(AddMemberRequest addMemberRequest, MultipartFile multipartFile, String jwtToken) {
         String email = jwtUtil.getEmail(jwtToken);
-        Member member = memberRepository.findByEmail(email);
-        if (member == null) {
-            throw new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email);
-        }
+        Member member = Optional.ofNullable(memberRepository.findByEmail(email))
+                .orElseThrow(()->new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email));
 
         // Copy non-null properties from addMemberRequest to member
         copyNonNullProperties(addMemberRequest, member);
@@ -158,11 +155,8 @@ public class MemberService {
 
     public String deleteMember(String token) {
         String email = jwtUtil.getEmail(token);
-        Member member = memberRepository.findByEmail(email);
-
-        if(member == null){
-            throw new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email);
-        }
+        Member member = Optional.ofNullable(memberRepository.findByEmail(email))
+                .orElseThrow(()->new MemberException.MemberConflictException(MEMBER_NOT_FOUND.ILLEGAL_NICKNAME_ALREADY_EXISTS, email));
 
         member.setDeleted_at(LocalDateTime.now());
         Member result = memberRepository.save(member);

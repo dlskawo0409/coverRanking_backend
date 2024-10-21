@@ -2,14 +2,17 @@ package com.example.coverranking.follow.domain;
 
 import com.example.coverranking.member.domain.Member;
 import jakarta.persistence.*;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.*;
 
-import java.time.LocalDateTime;
-
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Getter
 @Entity
 public class Follow {
     @Id
     @Column(name = "FOLLOW_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long followId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -19,7 +22,5 @@ public class Follow {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FOLLOWER")
     private Member follower;
-
-
 
 }
