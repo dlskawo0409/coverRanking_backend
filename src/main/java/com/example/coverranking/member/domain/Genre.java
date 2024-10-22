@@ -17,6 +17,7 @@ public enum Genre {
     DANCE("Dance");
     private final String displayName;
 
+
     Genre(String displayName) {
         this.displayName = displayName;
     }
@@ -33,6 +34,6 @@ public enum Genre {
                 return genre;
             }
         }
-        throw new IllegalArgumentException("Unknown genre: " + value);
+        throw new IllegalArgumentException("알 수 없는 장르: " + value);
     }
 }

@@ -1,12 +1,11 @@
 package com.example.coverranking.follow.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
-
-@Getter
-@Builder
-public class MemberFollowingsResponse {
-    private Long memberId;
-    private String nickName;
-    private String profile;
+public record MemberFollowingsResponse(
+        Long memberId,
+        String nickName,
+        String profile
+) {
+    public static MemberFollowingsResponse of(Long memberId , String nickName, String profile){
+        return new MemberFollowingsResponse(memberId, nickName, profile);
+    }
 }

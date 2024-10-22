@@ -1,6 +1,7 @@
 package com.example.coverranking.follow.presentation;
 
 import com.example.coverranking.follow.application.FollowService;
+import com.example.coverranking.follow.dto.response.FollowingDeleteResponse;
 import com.example.coverranking.follow.dto.response.MemberFollowingsResponse;
 import com.example.coverranking.member.dto.request.CustomMemberDetails;
 import com.example.coverranking.member.exception.MemberException;
@@ -25,9 +26,9 @@ public class FollowController {
     private final FollowService followService;
 
     @PostMapping("")
-    public ResponseEntity<?> followingController(@RequestHeader("access") String token, @RequestBody Map<String, Long> memberIdMap, @AuthenticationPrincipal CustomMemberDetails loginMember) {
-        log.info("member.name : {}", loginMember.getMember().getEmail());
-        followService.followingByMemberId(memberIdMap.get("memberId"), token);
+    public ResponseEntity<?> followingController(@AuthenticationPrincipal CustomMemberDetails loginMember,
+                                                 @RequestBody Map<String, Long> memberIdMap) {
+        followService.followingByMemberId(loginMember, memberIdMap.get("memberId"));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -36,6 +37,14 @@ public class FollowController {
         List<MemberFollowingsResponse> result = followService.getFollowingsByNickName(nickname);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<?> removeFollowings(@AuthenticationPrincipal CustomMemberDetails loginMember,
+                                              @RequestParam Long memberId){
+        String result = followService.deleteFollowing(loginMember, memberId);
+        var followingDeleteResponse = FollowingDeleteResponse.from(result);
+        return new ResponseEntity<>(followingDeleteResponse, HttpStatus.OK);
     }
 
 
