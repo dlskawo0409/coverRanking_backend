@@ -1,6 +1,7 @@
 package com.example.coverranking.follow.application;
 
 import com.example.coverranking.auth.jwt.JWTUtil;
+import com.example.coverranking.common.storage.application.S3Service;
 import com.example.coverranking.follow.domain.Follow;
 import com.example.coverranking.follow.domain.FollowRepository;
 import com.example.coverranking.follow.dto.response.MemberFollowingsResponse;
@@ -29,6 +30,7 @@ public class FollowService {
     private final JWTUtil jwtUtil;
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
+    private final S3Service s3Service;
 
     @Transactional
     public void followingByMemberId(CustomMemberDetails loginMember, Long memberId){
@@ -62,11 +64,11 @@ public class FollowService {
 
         List<Follow> follows =  followRepository.findByFollower(follower);
         List<MemberFollowingsResponse> result = follows.stream()
-                .map(follow -> MemberFollowingsResponse.builder()
-                        .memberId(follow.getFollowing().getMemberId())
-                        .nickName(follow.getFollowing().getNickname())
-                        .profile(follow.getFollowing().getProfile().getImageUrl())
-                        .build())
+                .map(follow -> MemberFollowingsResponse.of(
+                                follow.getFollowing().getMemberId(),
+                                follow.getFollowing().getNickname(),
+                                s3Service.getPresignedURL(follow.getFollowing().getProfile().getImageUrl())
+                        ))
                 .collect(Collectors.toList());
 
 
@@ -91,6 +93,5 @@ public class FollowService {
         followRepository.deleteByFollowerAndFollowing(follower, following);
         return following.getNickname();
     }
-
 
 }

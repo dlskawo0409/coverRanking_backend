@@ -1,16 +1,13 @@
 package com.example.coverranking.member.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Builder
-public class MemberResponse {
-    private Long memberId;
-    private String nickName;
-    private String imageUrl;
-    private Long following;
-    private Long follower;
-
+public record MemberResponse (
+        Long memberId,
+     String nickName,
+     String imageUrl,
+     int following,
+     int follower
+){
+    public static MemberResponse of(Long memberId, String nickName, String imageUrl, int following, int follower){
+        return new MemberResponse(memberId, nickName, imageUrl, following, follower);
+    }
 }
