@@ -1,9 +1,9 @@
 package com.example.coverranking.member.domain;
 
+import com.example.coverranking.cover.domain.Cover;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-
-import java.util.ArrayList;
+import jakarta.persistence.OneToMany;
 
 public enum Genre {
     BALLAD("Ballad"),
@@ -17,6 +17,8 @@ public enum Genre {
     DANCE("Dance");
     private final String displayName;
 
+    @OneToMany
+    private Cover cover;
 
     Genre(String displayName) {
         this.displayName = displayName;

@@ -3,6 +3,8 @@ package com.example.coverranking.member.domain;
 import com.example.coverranking.comment.BasicEntity;
 import com.example.coverranking.common.Image.domain.Image;
 import com.example.coverranking.common.util.RegexUtil;
+import com.example.coverranking.cover.domain.Cover;
+import com.example.coverranking.cover.domain.Like;
 import com.example.coverranking.follow.domain.Follow;
 import com.example.coverranking.member.exception.MemberException.*;
 import jakarta.persistence.*;
@@ -72,6 +74,11 @@ public class Member extends BasicEntity implements UserDetails  {
     @OneToMany(mappedBy = "follower")
     private List<Follow> follower;
 
+    @OneToMany(mappedBy = "member")
+    private List<Like> likes;
+
+    @OneToMany(mappedBy = "")
+    private List<Cover> covers;
 
     // 생성자에서 @Builder 제거
     public Member(String email, String password, String nickname, Role role) {
