@@ -61,8 +61,6 @@ public class MemberService {
                 .role(Role.USER)
                 .profile(profile)
                 .build());
-
-
     }
 
     private void checkEmailDuplicate(String email) {
@@ -153,13 +151,15 @@ public class MemberService {
         Member result = memberRepository.save(member);
 
         // Build and return the response
-        return MemberUpdateResponse.builder()
-                .nickName(result.getNickname())
-                .age(result.getAge())
-                .gender(result.getGender())
-                .preferredGenres(result.getPreferredGenres())
-                .image(result.getProfile() != null ? result.getProfile().getImageUrl() : null)
-                .build();
+        return MemberUpdateResponse.of(
+                result.getNickname(),
+                result.getAge(),
+                result.getGender(),
+                result.getPreferredGenres(),
+                result.getProfile() != null ? result.getProfile().getImageUrl() : null
+
+        );
+
     }
 
     public String deleteMember(CustomMemberDetails loginMember) {

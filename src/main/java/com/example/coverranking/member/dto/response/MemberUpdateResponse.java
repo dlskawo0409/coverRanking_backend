@@ -1,18 +1,17 @@
 package com.example.coverranking.member.dto.response;
 
 import com.example.coverranking.member.domain.Genre;
-import lombok.Builder;
-import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Builder
-@Getter
-public class MemberUpdateResponse {
-    private String nickName;
-    private int age;
-    private String gender;
-    private List<Genre> preferredGenres;
-    private String image;
+public record MemberUpdateResponse(
+        String nickName,
+        int age,
+        String gender,
+        List<Genre> preferredGenres,
+        String image
+) {
+    public static MemberUpdateResponse of(String nickName, int age, String gender, List<Genre> preferredGenres, String image){
+        return new MemberUpdateResponse(nickName, age, gender,preferredGenres, image);
+    }
 }
